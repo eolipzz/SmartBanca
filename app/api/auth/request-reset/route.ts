@@ -17,7 +17,8 @@ export async function POST(request:Request){
     if(found.rows[0]){
       const token=newToken();
       await withUser(found.rows[0].id,client=>client.query("INSERT INTO auth_token(user_id,token_hash,purpose,expires_at) VALUES($1,$2,'reset_password',now()+interval '30 minutes')",[found.rows[0].id,hashToken(token)]));
-      const url=`${process.env.NEXT_PUBLIC_APP_URL??"http://localhost:3000"}/recuperar?token=${encodeURIComponent(token)}`;
+      const appUrl=process.env.NEXT_PUBLIC_APP_URL||new URL(request.url).origin;
+      const url=`${appUrl}/recuperar?token=${encodeURIComponent(token)}`;
       await sendMail({to:data.email,subject:"Redefina sua senha do SmartBanca",text:`Abra este link em até 30 minutos: ${url}`});
       if(process.env.NODE_ENV!=="production") devUrl=url;
     }

@@ -5,7 +5,10 @@ import { pool } from "@/lib/db";
 export function assertSameOrigin(request: Request) {
   const origin = request.headers.get("origin");
   const configured=process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
-  const allowed=new Set([new URL(configured).origin]);
+  const allowed=new Set([new URL(configured).origin,new URL(request.url).origin]);
+  const forwardedHost=request.headers.get("x-forwarded-host");
+  const forwardedProto=request.headers.get("x-forwarded-proto")||"https";
+  if(forwardedHost) allowed.add(`${forwardedProto}://${forwardedHost}`);
   if(process.env.VERCEL_URL) allowed.add(`https://${process.env.VERCEL_URL}`);
   if (origin && !allowed.has(origin)) throw new Error("INVALID_ORIGIN");
 }

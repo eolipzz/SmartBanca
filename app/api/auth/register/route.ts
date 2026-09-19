@@ -18,7 +18,8 @@ export async function POST(request: Request) {
     const result = await pool.query<{ id: string; role: string }>("INSERT INTO app_user (name, email, password_hash) VALUES ($1, $2, $3) RETURNING id, role", [data.name, data.email, hash]);
     const token=newToken();
     await withUser(result.rows[0].id,client=>client.query("INSERT INTO auth_token(user_id,token_hash,purpose,expires_at) VALUES($1,$2,'verify_email',now()+interval '24 hours')",[result.rows[0].id,hashToken(token)]));
-    const verificationUrl=`${process.env.NEXT_PUBLIC_APP_URL??"http://localhost:3000"}/recuperar?verify=${encodeURIComponent(token)}`;
+    const appUrl=process.env.NEXT_PUBLIC_APP_URL||new URL(request.url).origin;
+    const verificationUrl=`${appUrl}/recuperar?verify=${encodeURIComponent(token)}`;
     await sendMail({to:data.email,subject:"Confirme seu e-mail no SmartBanca",text:`Confirme sua conta em até 24 horas: ${verificationUrl}`});
     await createSession(result.rows[0]);
     return NextResponse.json({ id: result.rows[0].id, name: data.name, devVerificationUrl:process.env.NODE_ENV!=="production"?verificationUrl:undefined }, { status: 201 });
