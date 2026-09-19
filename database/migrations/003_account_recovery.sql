@@ -39,6 +39,10 @@ BEGIN
 END $$;
 
 REVOKE ALL ON FUNCTION verify_email_with_token(text),reset_password_with_token(text,text) FROM PUBLIC;
-GRANT EXECUTE ON FUNCTION verify_email_with_token(text),reset_password_with_token(text,text) TO smartbanca_app;
+DO $$ BEGIN
+  IF EXISTS (SELECT 1 FROM pg_roles WHERE rolname='smartbanca_app') THEN
+    GRANT EXECUTE ON FUNCTION verify_email_with_token(text),reset_password_with_token(text,text) TO smartbanca_app;
+  END IF;
+END $$;
 
 COMMIT;

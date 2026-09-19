@@ -1,7 +1,14 @@
 import { Pool, type PoolClient, type QueryResultRow } from "pg";
 
 const globalForDb = globalThis as unknown as { smartBancaPool?: Pool };
-export const pool = globalForDb.smartBancaPool ?? new Pool({ connectionString: process.env.DATABASE_URL, user: process.env.DATABASE_APP_USER ?? "smartbanca_app", max: 10, idleTimeoutMillis: 30_000, statement_timeout: 8_000 });
+const appUser = process.env.DATABASE_APP_USER?.trim();
+export const pool = globalForDb.smartBancaPool ?? new Pool({
+  connectionString: process.env.DATABASE_URL,
+  ...(appUser ? { user: appUser } : {}),
+  max: 10,
+  idleTimeoutMillis: 30_000,
+  statement_timeout: 8_000,
+});
 if (process.env.NODE_ENV !== "production") globalForDb.smartBancaPool = pool;
 
 export async function withUser<T>(userId: string, operation: (client: PoolClient) => Promise<T>): Promise<T> {

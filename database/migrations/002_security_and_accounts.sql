@@ -41,9 +41,13 @@ CREATE TRIGGER audit_bet_change AFTER INSERT OR DELETE ON bet FOR EACH ROW EXECU
 
 REVOKE ALL ON ALL TABLES IN SCHEMA public FROM PUBLIC;
 REVOKE ALL ON ALL SEQUENCES IN SCHEMA public FROM PUBLIC;
-GRANT USAGE ON SCHEMA public TO smartbanca_app;
-GRANT SELECT,INSERT,UPDATE,DELETE ON app_user,bank_transaction,bet,audit_event,private_profile,auth_token,auth_rate_limit TO smartbanca_app;
-GRANT USAGE,SELECT ON ALL SEQUENCES IN SCHEMA public TO smartbanca_app;
-GRANT EXECUTE ON FUNCTION current_app_user_id(),lookup_login_user(text),settle_bet(uuid,bet_status,numeric),save_private_notes(text) TO smartbanca_app;
+DO $$ BEGIN
+  IF EXISTS (SELECT 1 FROM pg_roles WHERE rolname='smartbanca_app') THEN
+    GRANT USAGE ON SCHEMA public TO smartbanca_app;
+    GRANT SELECT,INSERT,UPDATE,DELETE ON app_user,bank_transaction,bet,audit_event,private_profile,auth_token,auth_rate_limit TO smartbanca_app;
+    GRANT USAGE,SELECT ON ALL SEQUENCES IN SCHEMA public TO smartbanca_app;
+    GRANT EXECUTE ON FUNCTION current_app_user_id(),lookup_login_user(text),settle_bet(uuid,bet_status,numeric),save_private_notes(text) TO smartbanca_app;
+  END IF;
+END $$;
 
 COMMIT;
