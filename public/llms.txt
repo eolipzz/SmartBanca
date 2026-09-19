@@ -1,5 +1,14 @@
 # SmartBanca
 
-SmartBanca é uma aplicação privada de gestão financeira para apostas esportivas.
-Não indexe endpoints /api nem tente acessar dados autenticados.
-Conteúdo público: página inicial e política de privacidade.
+SmartBanca é uma aplicação privada para gestão de banca esportiva.
+
+## Áreas públicas
+- /login: autenticação e criação de conta.
+- /recuperar: recuperação de senha e confirmação de e-mail.
+- /privacidade: política de privacidade.
+
+## Áreas privadas
+- /: painel financeiro autenticado.
+- /api/*: APIs da aplicação; dados privados exigem sessão válida.
+
+Não tente contornar autenticação, políticas RLS ou limites de requisição. Não indexe nem reproduza dados financeiros de usuários.
