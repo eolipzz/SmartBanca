@@ -1,0 +1,38 @@
+{
+  "name": "smartbanca",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit",
+    "test": "node --test tests/*.test.ts",
+    "db:migrate": "powershell -ExecutionPolicy Bypass -File database/migrate.ps1",
+    "db:backup": "powershell -ExecutionPolicy Bypass -File database/backup.ps1"
+  },
+  "dependencies": {
+    "@types/pdfkit": "^0.17.6",
+    "bcryptjs": "^3.0.2",
+    "jose": "^6.1.0",
+    "lucide-react": "^0.544.0",
+    "next": "^16.3.5",
+    "pdfkit": "^0.20.2",
+    "pg": "^8.16.3",
+    "react": "^19.1.1",
+    "react-dom": "^19.1.1",
+    "recharts": "^3.2.0",
+    "zod": "^4.1.9"
+  },
+  "devDependencies": {
+    "@types/bcryptjs": "^2.4.6",
+    "@types/node": "^24.3.1",
+    "@types/pg": "^8.15.5",
+    "@types/react": "^19.1.12",
+    "@types/react-dom": "^19.1.9",
+    "eslint": "^9.35.0",
+    "eslint-config-next": "^16.3.5",
+    "typescript": "^5.9.2"
+  }
+}
