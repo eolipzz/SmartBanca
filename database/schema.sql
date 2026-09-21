@@ -14,6 +14,8 @@ CREATE TABLE app_user (
   email varchar(254) NOT NULL,
   password_hash text NOT NULL,
   role user_role NOT NULL DEFAULT 'user',
+  must_change_password boolean NOT NULL DEFAULT false,
+  account_active boolean NOT NULL DEFAULT true,
   failed_login_attempts smallint NOT NULL DEFAULT 0 CHECK (failed_login_attempts >= 0),
   locked_until timestamptz,
   last_login_at timestamptz,
@@ -99,7 +101,6 @@ ALTER TABLE private_profile FORCE ROW LEVEL SECURITY;
 
 CREATE POLICY user_self_select ON app_user FOR SELECT USING (id = current_app_user_id());
 CREATE POLICY user_self_update ON app_user FOR UPDATE USING (id = current_app_user_id()) WITH CHECK (id = current_app_user_id());
-CREATE POLICY user_registration ON app_user FOR INSERT WITH CHECK (role = 'user' AND failed_login_attempts = 0 AND locked_until IS NULL);
 CREATE POLICY transaction_isolation ON bank_transaction USING (user_id = current_app_user_id()) WITH CHECK (user_id = current_app_user_id());
 CREATE POLICY bet_isolation ON bet USING (user_id = current_app_user_id()) WITH CHECK (user_id = current_app_user_id());
 CREATE POLICY audit_read_own ON audit_event FOR SELECT USING (user_id = current_app_user_id());
